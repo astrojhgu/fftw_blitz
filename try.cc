@@ -1,3 +1,4 @@
+#define NFFTW_THREADS 1
 #include "fftw_blitz.hpp"
 #include "fio.h"
 #include <cstdlib>

@@ -7,7 +7,7 @@
 #include <iostream>
 #include <cstdlib>
 #ifndef NFFTW_THREADS
-#define NFFTW_THREADS 1
+//#define NFFTW_THREADS 8
 #endif
 
 namespace fftw_blitz
@@ -62,7 +62,7 @@ namespace fftw_blitz
   };
   
 
-
+#ifdef NFFTW_THREADS
   template <typename T,int N>
   blitz::Array<std::complex<T>,N> fft_c2c(blitz::Array<std::complex<T>,N> in, int sign=FFTW_FORWARD, int flags=FFTW_ESTIMATE)
   {
@@ -116,6 +116,8 @@ namespace fftw_blitz
     fftw_cleanup_threads();
     return out;
   }
+
+#endif
   /*
   template <typename T,int N>
   void fft_shift(blitz::Array<T,N>& mx)
