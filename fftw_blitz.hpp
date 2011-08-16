@@ -6,6 +6,10 @@
 #include <fftw3.h>
 #include <iostream>
 #include <cstdlib>
+#ifndef NFFTW_THREADS
+#define NFFTW_THREADS 1
+#endif
+
 namespace fftw_blitz
 {
 
@@ -66,10 +70,13 @@ namespace fftw_blitz
     blitz::Array<std::complex<T>,N> out(in.shape());
     fftw_plan p;
     blitz::TinyVector<int, N> ranks=in.shape();
+    fftw_init_threads();
+    fftw_plan_with_nthreads(NFFTW_THREADS);
     p = fftw_blitz_trait<T>::fft_plan_c2c(N, ranks.data(),reinterpret_cast<fftw_complex*>(in.data()), 
 		      reinterpret_cast<fftw_complex*>(out.data()), sign, flags);
     fftw_execute(p);
     fftw_destroy_plan(p);
+    fftw_cleanup_threads();
     return out;
   }
 
@@ -81,10 +88,13 @@ namespace fftw_blitz
     blitz::Array<std::complex<T>,N> out(in.shape());
     fftw_plan p;
     blitz::TinyVector<int, N> ranks=in.shape();
+    fftw_init_threads();
+    fftw_plan_with_nthreads(NFFTW_THREADS);
     p = fftw_blitz_trait<T>::fft_plan_r2c(N, ranks.data(),in.data(), 
 					  reinterpret_cast<fftw_complex*>(out.data()),flags);
     fftw_execute(p);
     fftw_destroy_plan(p);
+    fftw_cleanup_threads();
     return out;
   }
 
@@ -96,10 +106,14 @@ namespace fftw_blitz
     blitz::Array<T,N> out(in.shape());
     fftw_plan p;
     blitz::TinyVector<int, N> ranks=in.shape();
+    fftw_init_threads();
+    fftw_plan_with_nthreads(NFFTW_THREADS);
+
     p = fftw_blitz_trait<T>::fft_plan_c2r(N, ranks.data(), reinterpret_cast<fftw_complex*>(in.data()), 
 					 out.data(),flags);
     fftw_execute(p);
     fftw_destroy_plan(p);
+    fftw_cleanup_threads();
     return out;
   }
   /*

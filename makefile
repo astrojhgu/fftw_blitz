@@ -4,7 +4,7 @@ LFITS =-lcfitsio -lfio
 
 
 a.out:	try.o fftw_blitz.o
-	g++ try.o fftw_blitz.o ../fio/fio.o  ${LFITS} ../fio/fits_trait.o -o a.out -L/usr/local/lib -lblitz -lfftw3 -lfftw3f
+	g++ try.o fftw_blitz.o ../fio/fio.o  ${LFITS} ../fio/fits_trait.o -o a.out -L/usr/local/lib -lblitz -lfftw3_threads -lfftw3f_threads -lfftw3 -lfftw3f
 
 
 try.o:try.cc fftw_blitz.hpp
