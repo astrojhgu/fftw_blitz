@@ -62,7 +62,7 @@ namespace fftw_blitz
   };
   
 
-#ifdef NFFTW_THREADS
+
   template <typename T,int N>
   blitz::Array<std::complex<T>,N> fft_c2c(blitz::Array<std::complex<T>,N> in, int sign=FFTW_FORWARD, int flags=FFTW_ESTIMATE)
   {
@@ -70,13 +70,17 @@ namespace fftw_blitz
     blitz::Array<std::complex<T>,N> out(in.shape());
     fftw_plan p;
     blitz::TinyVector<int, N> ranks=in.shape();
+#ifdef NFFTW_THREADS
     fftw_init_threads();
     fftw_plan_with_nthreads(NFFTW_THREADS);
+#endif
     p = fftw_blitz_trait<T>::fft_plan_c2c(N, ranks.data(),reinterpret_cast<fftw_complex*>(in.data()), 
 		      reinterpret_cast<fftw_complex*>(out.data()), sign, flags);
     fftw_execute(p);
     fftw_destroy_plan(p);
+#ifdef NFFTW_THREADS 
     fftw_cleanup_threads();
+#endif
     return out;
   }
 
@@ -88,13 +92,17 @@ namespace fftw_blitz
     blitz::Array<std::complex<T>,N> out(in.shape());
     fftw_plan p;
     blitz::TinyVector<int, N> ranks=in.shape();
+#ifdef NFFTW_THREADS
     fftw_init_threads();
     fftw_plan_with_nthreads(NFFTW_THREADS);
+#endif
     p = fftw_blitz_trait<T>::fft_plan_r2c(N, ranks.data(),in.data(), 
 					  reinterpret_cast<fftw_complex*>(out.data()),flags);
     fftw_execute(p);
     fftw_destroy_plan(p);
+#ifdef NFFTW_THREADS
     fftw_cleanup_threads();
+#endif
     return out;
   }
 
@@ -106,38 +114,40 @@ namespace fftw_blitz
     blitz::Array<T,N> out(in.shape());
     fftw_plan p;
     blitz::TinyVector<int, N> ranks=in.shape();
+#ifdef NFFTW_THREADS
     fftw_init_threads();
     fftw_plan_with_nthreads(NFFTW_THREADS);
-
+#endif
     p = fftw_blitz_trait<T>::fft_plan_c2r(N, ranks.data(), reinterpret_cast<fftw_complex*>(in.data()), 
-					 out.data(),flags);
+					  out.data(),flags);
     fftw_execute(p);
     fftw_destroy_plan(p);
+#ifdef NFFTW_THREADS
     fftw_cleanup_threads();
+#endif
     return out;
   }
-
-#endif
+  
   /*
-  template <typename T,int N>
-  void fft_shift(blitz::Array<T,N>& mx)
+    template <typename T,int N>
+    void fft_shift(blitz::Array<T,N>& mx)
   {
-    blitz::TinyVector<T,N> idx1,idx2;
-    for(int cnt=0;cnt<N;++cnt)
-      {
-	for(typename blitz::Array<T,N>::iterator i=mx.begin();
-	    i!=mx.end();++i)
-	  {
-	    if(i.position()[cnt]<mx.extent(cnt)/2)
-	      {
-		blitz::TinyVector<int,N> idx=i.position();
-		idx(cnt)+=mx.extent(cnt)/2;
-		T temp=mx(idx);
-		mx(idx)=*i;
-		*i=temp;
-	      }
-	  }
-      }
+  blitz::TinyVector<T,N> idx1,idx2;
+  for(int cnt=0;cnt<N;++cnt)
+  {
+  for(typename blitz::Array<T,N>::iterator i=mx.begin();
+  i!=mx.end();++i)
+  {
+  if(i.position()[cnt]<mx.extent(cnt)/2)
+  {
+  blitz::TinyVector<int,N> idx=i.position();
+  idx(cnt)+=mx.extent(cnt)/2;
+  T temp=mx(idx);
+  mx(idx)=*i;
+  *i=temp;
+  }
+  }
+  }
   }
   */
   template <typename T,int N>
