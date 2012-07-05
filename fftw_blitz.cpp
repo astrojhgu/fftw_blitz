@@ -52,4 +52,53 @@ namespace fftw_blitz{
     return fftwf_plan_dft_c2r(rank,n,in,out,flags);
   }
 
+  void fftw_blitz_trait<double>::fftw_init_threads()
+  {
+    ::fftw_init_threads();
+  }
+
+  void fftw_blitz_trait<float>::fftw_init_threads()
+  {
+    ::fftwf_init_threads();
+  }
+
+  void fftw_blitz_trait<double>::fftw_plan_with_nthreads(int nthreads)
+  {
+    ::fftw_plan_with_nthreads(nthreads);
+  }
+  
+  void fftw_blitz_trait<float>::fftw_plan_with_nthreads(int nthreads)
+  {
+    ::fftwf_plan_with_nthreads(nthreads);
+  }
+
+  void fftw_blitz_trait<double>::fftw_execute(const fftw_plan plan)
+  {
+    ::fftw_execute(plan);
+  }
+  
+  void fftw_blitz_trait<float>::fftw_execute(const fftwf_plan plan)
+  {
+    ::fftwf_execute(plan);
+  }
+
+  void fftw_blitz_trait<double>::fftw_destroy_plan(fftw_plan plan)
+  {
+    ::fftw_destroy_plan(plan);
+  }
+
+  void fftw_blitz_trait<float>::fftw_destroy_plan(fftwf_plan plan)
+  {
+    ::fftwf_destroy_plan(plan);
+  }
+
+  void fftw_blitz_trait<double>::fftw_cleanup_threads()
+  {
+    ::fftw_cleanup_threads();
+  }
+
+  void fftw_blitz_trait<float>::fftw_cleanup_threads()
+  {
+    ::fftwf_cleanup_threads();
+  }
 }

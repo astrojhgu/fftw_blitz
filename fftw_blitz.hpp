@@ -29,6 +29,8 @@ namespace fftw_blitz
   class fftw_blitz_trait<double>
   {
   public:
+    typedef fftw_complex fftw_complex_type;
+    typedef fftw_plan fftw_plan_type;
     static void test()
     {
     }
@@ -41,12 +43,19 @@ namespace fftw_blitz
     static fftw_plan fft_plan_c2r(int, const int*,
 				  fftw_complex*, double*,
 				  unsigned int);
+    static void fftw_init_threads();
+    static void fftw_plan_with_nthreads(int nthreads);
+    static void fftw_execute(const fftw_plan plan);
+    static void fftw_destroy_plan(fftw_plan plan);
+    static void fftw_cleanup_threads();
   };
   
   template <>
   class fftw_blitz_trait<float>
   {
   public:
+    typedef fftwf_complex fftw_complex_type;
+    typedef fftwf_plan fftw_plan_type;
     static void test()
     {
     }
@@ -59,6 +68,11 @@ namespace fftw_blitz
     static fftwf_plan fft_plan_c2r(int, const int*,
 				  fftwf_complex*, float*,
 				  unsigned int);
+    static void fftw_init_threads();
+    static void fftw_plan_with_nthreads(int nthreads);
+    static void fftw_execute(const fftwf_plan plan);
+    static void fftw_destroy_plan(fftwf_plan plan);
+    static void fftw_cleanup_threads();
   };
   
 
@@ -68,18 +82,18 @@ namespace fftw_blitz
   {
     fftw_blitz_trait<T>::test();
     blitz::Array<std::complex<T>,N> out(in.shape());
-    fftw_plan p;
+    typename fftw_blitz_trait<T>::fftw_plan_type p;
     blitz::TinyVector<int, N> ranks=in.shape();
 #ifdef NFFTW_THREADS
-    fftw_init_threads();
-    fftw_plan_with_nthreads(NFFTW_THREADS);
+    fftw_blitz_trait<T>::fftw_init_threads();
+    fftw_blitz_trait<T>::fftw_plan_with_nthreads(NFFTW_THREADS);
 #endif
-    p = fftw_blitz_trait<T>::fft_plan_c2c(N, ranks.data(),reinterpret_cast<fftw_complex*>(in.data()), 
-		      reinterpret_cast<fftw_complex*>(out.data()), sign, flags);
-    fftw_execute(p);
-    fftw_destroy_plan(p);
+    p = fftw_blitz_trait<T>::fft_plan_c2c(N, ranks.data(),reinterpret_cast<typename fftw_blitz_trait<T>::fftw_complex_type*>(in.data()), 
+					  reinterpret_cast<typename fftw_blitz_trait<T>::fftw_complex_type*>(out.data()), sign, flags);
+    fftw_blitz_trait<T>::fftw_execute(p);
+    fftw_blitz_trait<T>::fftw_destroy_plan(p);
 #ifdef NFFTW_THREADS 
-    fftw_cleanup_threads();
+    fftw_blitz_trait<T>::fftw_cleanup_threads();
 #endif
     return out;
   }
@@ -90,18 +104,18 @@ namespace fftw_blitz
   {
     fftw_blitz_trait<T>::test();
     blitz::Array<std::complex<T>,N> out(in.shape());
-    fftw_plan p;
+    typename fftw_blitz_trait<T>::fftw_plan_type p;
     blitz::TinyVector<int, N> ranks=in.shape();
 #ifdef NFFTW_THREADS
-    fftw_init_threads();
-    fftw_plan_with_nthreads(NFFTW_THREADS);
+    fftw_blitz_trait<T>::fftw_init_threads();
+    fftw_blitz_trait<T>::fftw_plan_with_nthreads(NFFTW_THREADS);
 #endif
     p = fftw_blitz_trait<T>::fft_plan_r2c(N, ranks.data(),in.data(), 
-					  reinterpret_cast<fftw_complex*>(out.data()),flags);
-    fftw_execute(p);
-    fftw_destroy_plan(p);
+					  reinterpret_cast<typename fftw_blitz_trait<T>::fftw_complex_type*>(out.data()),flags);
+    fftw_blitz_trait<T>::fftw_execute(p);
+    fftw_blitz_trait<T>::fftw_destroy_plan(p);
 #ifdef NFFTW_THREADS
-    fftw_cleanup_threads();
+    fftw_blitz_trait<T>::fftw_cleanup_threads();
 #endif
     return out;
   }
@@ -112,18 +126,18 @@ namespace fftw_blitz
   {
     fftw_blitz_trait<T>::test();
     blitz::Array<T,N> out(in.shape());
-    fftw_plan p;
+    typename fftw_blitz_trait<T>::fftw_plan_type p;
     blitz::TinyVector<int, N> ranks=in.shape();
 #ifdef NFFTW_THREADS
-    fftw_init_threads();
-    fftw_plan_with_nthreads(NFFTW_THREADS);
+    fftw_blitz_trait<T>::fftw_init_threads();
+    fftw_blitz_trait<T>::fftw_plan_with_nthreads(NFFTW_THREADS);
 #endif
-    p = fftw_blitz_trait<T>::fft_plan_c2r(N, ranks.data(), reinterpret_cast<fftw_complex*>(in.data()), 
+    p = fftw_blitz_trait<T>::fft_plan_c2r(N, ranks.data(), reinterpret_cast<typename fftw_blitz_trait<T>::fftw_complex_type*>(in.data()), 
 					  out.data(),flags);
-    fftw_execute(p);
-    fftw_destroy_plan(p);
+    fftw_blitz_trait<T>::fftw_execute(p);
+    fftw_blitz_trait<T>::fftw_destroy_plan(p);
 #ifdef NFFTW_THREADS
-    fftw_cleanup_threads();
+    fftw_blitz_trait<T>::fftw_cleanup_threads();
 #endif
     return out;
   }
