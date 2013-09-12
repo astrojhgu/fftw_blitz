@@ -98,6 +98,22 @@ namespace fftw_blitz
     return out;
   }
 
+  template <typename T,int N>
+  blitz::Array<std::complex<T>,N> ifft_c2c_normed(blitz::Array<std::complex<T>,N> in, int flags=FFTW_ESTIMATE)
+  {
+    T norm=1;
+    for(int i=0;i<N;++i)
+      {
+	norm*=in.extent(i);
+      }
+    blitz::Array<std::complex<T>,N> result(fft_c2c(in,FFTW_BACKWARD,flags));
+    for(typename blitz::Array<std::complex<T>,N>::iterator i=result.begin();i!=result.end();++i)
+      {
+	(*i)/=norm;
+      }
+    return result;
+  }
+
   
   template <typename T,int N>
   blitz::Array<std::complex<T>,N> fft_r2c(blitz::Array<T,N> in,int flags=FFTW_ESTIMATE)
@@ -190,6 +206,37 @@ namespace fftw_blitz
 	swap_by_dim(mx,i);
       }
   }
+
+  template <typename T,int N>
+  blitz::Array<std::complex<T>,N> shifted_fft_c2c(blitz::Array<std::complex<T>,N> in, int sign=FFTW_FORWARD, int flags=FFTW_ESTIMATE)
+  {
+    fft_shift(in);
+    blitz::Array<std::complex<T>,N> result(fft_c2c(in,sign,flags));
+    fft_shift(in);
+    fft_shift(result);
+    return result;
+  }
+
+  template <typename T,int N>
+  blitz::Array<std::complex<T>,N> shifted_ifft_c2c_normed(blitz::Array<std::complex<T>,N> in, int flags=FFTW_ESTIMATE)
+  {
+    fft_shift(in);
+    blitz::Array<std::complex<T>,N> result(fft_c2c(in,FFTW_BACKWARD,flags));
+    fft_shift(in);
+    fft_shift(result);
+    T norm=1;
+    for(int i=0;i<N;++i)
+      {
+	norm*=in.extent(i);
+      }
+    for(typename blitz::Array<std::complex<T>,N>::iterator i=result.begin();i!=result.end();++i)
+      {
+	(*i)/=norm;
+      }
+    return result;
+  }
+  
+
   
 };
 
